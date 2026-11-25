@@ -1,0 +1,14 @@
+{
+  "name": "영거진",
+  "handle": "@young.gazine",
+  "logo": "templates/logo.svg",
+  "defaultAccent": "#FFD84D",
+  "accents": {
+    "신조어": "#FFD84D",
+    "밈": "#FF7AB6",
+    "팝업": "#7AD7FF",
+    "인기템": "#9BE15D",
+    "몰랐던사실": "#FF9F43",
+    "요즘애들": "#B98CFF"
+  }
+}

@@ -1,0 +1,11 @@
+node_modules/
+output/
+.env
+*.log
+# 게시물 원고·캡션은 GitHub에 올리지 않음 (예시 1개만)
+content/*
+!content/sample.json
+# 시험 생성 배경은 제외
+backgrounds/*-test.png
+backgrounds/*-test.txt
+data/

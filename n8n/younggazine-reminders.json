@@ -1,0 +1,66 @@
+{
+  "name": "영거진 리마인드 (21시 정리 + 48시간 성과 알림)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": { "interval": [{ "field": "cronExpression", "expression": "0 21 * * *" }] }
+      },
+      "id": "a1b2c3d4-0001-4000-8000-000000000001",
+      "name": "매일 21시",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:3939/api/remind",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [{ "name": "X-Studio-Pin", "value": "" }] },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"kind\":\"daily\"}",
+        "options": { "timeout": 30000 }
+      },
+      "id": "a1b2c3d4-0002-4000-8000-000000000002",
+      "name": "오늘 정리 알림",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [260, 0]
+    },
+    {
+      "parameters": {
+        "rule": { "interval": [{ "field": "cronExpression", "expression": "5 9-23 * * *" }] }
+      },
+      "id": "a1b2c3d4-0003-4000-8000-000000000003",
+      "name": "매시 5분 (9~23시)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 220]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:3939/api/remind",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [{ "name": "X-Studio-Pin", "value": "" }] },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"kind\":\"48h\"}",
+        "options": { "timeout": 30000 }
+      },
+      "id": "a1b2c3d4-0004-4000-8000-000000000004",
+      "name": "48시간 성과 알림",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [260, 220]
+    }
+  ],
+  "connections": {
+    "매일 21시": { "main": [[{ "node": "오늘 정리 알림", "type": "main", "index": 0 }]] },
+    "매시 5분 (9~23시)": { "main": [[{ "node": "48시간 성과 알림", "type": "main", "index": 0 }]] }
+  },
+  "active": false,
+  "settings": { "executionOrder": "v1", "timezone": "Asia/Seoul" },
+  "pinData": {}
+}

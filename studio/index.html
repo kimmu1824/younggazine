@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#121212">
+<title>영거진 스튜디오</title>
+<link rel="icon" href="/logo/profile-A-monogram.png">
+<link rel="apple-touch-icon" href="/logo/profile-A-monogram.png">
+<style>
+  @font-face { font-family: "Pretendard"; font-weight: 600; src: url(/fonts/Pretendard-SemiBold.woff2) format("woff2"); }
+  @font-face { font-family: "Pretendard"; font-weight: 700; src: url(/fonts/Pretendard-Bold.woff2) format("woff2"); }
+  @font-face { font-family: "Pretendard"; font-weight: 800; src: url(/fonts/Pretendard-ExtraBold.woff2) format("woff2"); }
+  @font-face { font-family: "Pretendard"; font-weight: 900; src: url(/fonts/Pretendard-Black.woff2) format("woff2"); }
+  :root {
+    --ink: #121212; --paper: #FFF8EC; --card: #FFFFFF; --line: #E8E1D4; --muted: #6B665E;
+    --accent: #FFD84D; --ok: #1F9D55; --bad: #D64545;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--paper); color: var(--ink); font-family: "Pretendard", "Malgun Gothic", system-ui, sans-serif; font-weight: 600; }
+  body { padding-bottom: 96px; word-break: keep-all; }
+  a { color: inherit; }
+  button { font: inherit; cursor: pointer; }
+
+  header { position: sticky; top: 0; z-index: 10; background: var(--ink); color: #fff;
+           padding: calc(env(safe-area-inset-top) + 12px) 16px 12px; display: flex; align-items: center; gap: 10px; }
+  header img { width: 34px; height: 34px; border-radius: 50%; }
+  header h1 { font-size: 18px; font-weight: 900; letter-spacing: -.5px; }
+  header .sub { margin-left: auto; font-size: 12px; opacity: .6; }
+
+  main { max-width: 760px; margin: 0 auto; padding: 16px; }
+  h2 { font-size: 20px; font-weight: 900; letter-spacing: -.5px; margin: 6px 0 12px; }
+  .muted { color: var(--muted); font-size: 13px; }
+
+  nav.tabs { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; display: grid; grid-template-columns: repeat(3, 1fr);
+             background: #fff; border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); }
+  nav.tabs a { text-decoration: none; text-align: center; padding: 10px 0 12px; font-size: 12px; color: var(--muted); }
+  nav.tabs a b { display: block; font-size: 20px; line-height: 1.3; }
+  nav.tabs a.on { color: var(--ink); font-weight: 800; }
+
+  .list { display: grid; gap: 12px; }
+  .item { display: grid; grid-template-columns: 84px 1fr; gap: 12px; align-items: center; background: var(--card);
+          border: 1px solid var(--line); border-radius: 16px; padding: 10px; text-decoration: none; }
+  .thumb { width: 84px; aspect-ratio: 4/5; border-radius: 10px; background: #eee center/cover no-repeat; }
+  .thumb.empty { display: grid; place-items: center; font-size: 11px; color: var(--muted); background: #F1ECE2; }
+  .item .t { font-size: 16px; font-weight: 800; line-height: 1.3; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .chip { font-size: 11px; padding: 3px 8px; border-radius: 999px; background: #F1ECE2; color: var(--muted); }
+  .chip.y { background: var(--accent); color: var(--ink); }
+
+  .strip { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 8px; margin: 0 -16px; padding-left: 16px; padding-right: 16px; }
+  .strip a { flex: 0 0 78%; max-width: 360px; scroll-snap-align: center; }
+  .strip img { width: 100%; display: block; border-radius: 14px; border: 1px solid var(--line); background: #ddd; }
+  .strip .n { font-size: 12px; color: var(--muted); margin-top: 4px; text-align: center; }
+
+  .btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 14px 0; }
+  .btn { border: 2px solid var(--ink); background: #fff; border-radius: 14px; padding: 13px 10px; font-weight: 800; font-size: 15px; }
+  .btn.primary { background: var(--ink); color: #fff; }
+  .btn.y { background: var(--accent); }
+  .btn.full { grid-column: 1 / -1; }
+  .btn:disabled { opacity: .5; }
+
+  .box { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px; margin-bottom: 12px; }
+  .box h3 { font-size: 15px; font-weight: 900; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  .box h3 .btn { margin-left: auto; padding: 6px 12px; font-size: 13px; border-radius: 10px; }
+  pre { white-space: pre-wrap; font: inherit; font-size: 14px; line-height: 1.6; font-weight: 600; }
+  details summary { cursor: pointer; font-weight: 800; }
+
+  form.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  label { font-size: 12px; color: var(--muted); display: grid; gap: 4px; }
+  input, select, textarea { font: inherit; font-size: 15px; padding: 10px; border: 1px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink); width: 100%; }
+  label.check { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ink); }
+  label.check input { width: 20px; height: 20px; }
+  .span2 { grid-column: 1 / -1; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: right; padding: 8px 6px; border-bottom: 1px solid var(--line); }
+  th:first-child, td:first-child { text-align: left; }
+  th { color: var(--muted); font-weight: 700; }
+  .scroll { overflow-x: auto; }
+
+  .cmp { display: grid; gap: 10px; }
+  .cmp .row { display: grid; grid-template-columns: 100px 1fr 54px; gap: 8px; align-items: center; font-size: 13px; }
+  .bar { height: 14px; border-radius: 7px; background: #F1ECE2; overflow: hidden; }
+  .bar i { display: block; height: 100%; background: var(--ink); border-radius: 7px; }
+
+  .bgs { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+  .bgs figure { background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+  .bgs img { width: 100%; aspect-ratio: 4/5; object-fit: cover; display: block; }
+  .bgs figcaption { padding: 8px; font-size: 12px; }
+
+  #toast { position: fixed; left: 50%; bottom: 90px; transform: translateX(-50%) translateY(20px); opacity: 0;
+           background: var(--ink); color: #fff; padding: 10px 16px; border-radius: 999px; font-size: 14px; transition: .2s; z-index: 50; pointer-events: none; max-width: 90vw; }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .log { font-family: ui-monospace, Consolas, monospace; font-size: 12px; background: #1d1d1d; color: #eee; padding: 10px; border-radius: 10px; max-height: 200px; overflow: auto; white-space: pre-wrap; }
+  .empty-state { text-align: center; padding: 40px 10px; color: var(--muted); }
+  .pinbox { max-width: 320px; margin: 60px auto; text-align: center; display: grid; gap: 12px; }
+</style>
+</head>
+<body>
+<header>
+  <img src="/logo/profile-A-monogram.png" alt="">
+  <h1>영거진 스튜디오</h1>
+  <span class="sub" id="status"></span>
+</header>
+<main id="app"><p class="muted">불러오는 중…</p></main>
+<nav class="tabs" id="tabs">
+  <a href="#/" data-tab="decks"><b>🗂️</b>게시물</a>
+  <a href="#/metrics" data-tab="metrics"><b>📈</b>성과 기록</a>
+  <a href="#/bg" data-tab="bg"><b>🖼️</b>배경 창고</a>
+</nav>
+<div id="toast"></div>
+
+<script>
+const $app = document.getElementById("app");
+const esc = (s = "") => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+let INFO = {};
+
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove("show"), 2200);
+}
+
+async function api(url, opts = {}) {
+  const res = await fetch(url, { headers: { "Content-Type": "application/json" }, ...opts });
+  if (res.status === 401) { showPin(); throw new Error("pin"); }
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw Object.assign(new Error(data.error || res.statusText), { data });
+  return data;
+}
+
+// 복사: https가 아니어도 동작하도록 예비 방식 포함
+async function copyText(text, label) {
+  try {
+    if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(text); }
+    else {
+      const ta = document.createElement("textarea");
+      ta.value = text; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, text.length);
+      document.execCommand("copy"); ta.remove();
+    }
+    toast(`${label} 복사했어요 ✅`);
+  } catch { toast("복사 실패 — 글을 길게 눌러 직접 복사해 주세요"); }
+}
+
+// 사진 전체 저장: 공유 시트(여러 장 한 번에) → 안 되면 한 장씩 다운로드
+async function saveAll(deck) {
+  const imgs = deck.images;
+  if (!imgs.length) return toast("먼저 렌더링해 주세요");
+  try {
+    const files = await Promise.all(imgs.map(async (im, i) => {
+      const blob = await (await fetch(im.url)).blob();
+      return new File([blob], `${deck.slug}-${String(i + 1).padStart(2, "0")}.png`, { type: "image/png" });
+    }));
+    if (navigator.canShare && navigator.canShare({ files })) {
+      await navigator.share({ files, title: deck.title });
+      return;
+    }
+  } catch (e) { if (e && e.name === "AbortError") return; }
+  for (const [i, im] of imgs.entries()) {
+    const a = document.createElement("a");
+    a.href = im.url; a.download = `${deck.slug}-${String(i + 1).padStart(2, "0")}.png`;
+    document.body.appendChild(a); a.click(); a.remove();
+    await sleep(450);
+  }
+  toast(`${imgs.length}장 다운로드를 시작했어요`);
+}
+
+function setTab(name) {
+  document.querySelectorAll("#tabs a").forEach((a) => a.classList.toggle("on", a.dataset.tab === name));
+}
+
+// ---------- 화면: 게시물 목록 ----------
+async function viewDecks() {
+  setTab("decks");
+  const decks = await api("/api/decks");
+  if (!decks.length) {
+    $app.innerHTML = `<div class="empty-state">아직 원고가 없어요.<br>content 폴더에 원고(JSON)를 넣으면 여기에 보여요.</div>`;
+    return;
+  }
+  $app.innerHTML = `<h2>게시물</h2><div class="list">${decks.map((d) => `
+    <a class="item" href="#/deck/${encodeURIComponent(d.file)}">
+      ${d.images[0] ? `<div class="thumb" style="background-image:url('${d.images[0].url}')"></div>` : `<div class="thumb empty">렌더 전</div>`}
+      <div>
+        <div class="t">${esc(d.title)}</div>
+        <div class="chips">
+          <span class="chip y">${esc(d.category || "기타")}</span>
+          <span class="chip">${d.images.length ? `${d.images.length}장 완성` : `${d.slides}장 원고`}</span>
+          ${d.hasCaption ? `<span class="chip">캡션 있음</span>` : ``}
+        </div>
+        <div class="muted" style="margin-top:6px">${new Date(d.updatedAt).toLocaleString("ko-KR", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" })} 수정</div>
+      </div>
+    </a>`).join("")}</div>`;
+}
+
+// ---------- 화면: 게시물 상세 ----------
+async function viewDeck(file) {
+  setTab("decks");
+  const d = await api(`/api/deck/${encodeURIComponent(file)}`);
+  const [allMetrics, posts] = await Promise.all([api("/api/metrics"), api("/api/posts")]);
+  const metrics = allMetrics.find((m) => m.slug === d.slug);
+  const post = posts.find((x) => x.slug === d.slug);
+  const fmtDT = (s) => new Date(s).toLocaleString("ko-KR", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" });
+  $app.innerHTML = `
+    <a href="#/" class="muted" style="text-decoration:none">← 목록</a>
+    <h2 style="margin-top:8px">${esc(d.title)}</h2>
+    ${d.images.length ? `<div class="strip">${d.images.map((im, i) => `
+      <a href="${im.url}" target="_blank" rel="noopener"><img src="${im.url}" alt="${i + 1}장" loading="lazy"><div class="n">${i + 1} / ${d.images.length} · 눌러서 크게 보기</div></a>`).join("")}</div>`
+      : `<div class="box empty-state">아직 렌더링 전이에요. 아래 '렌더링'을 눌러주세요.</div>`}
+    <div class="btns">
+      <button class="btn primary full" id="b-save" ${d.images.length ? "" : "disabled"}>📥 사진 전체 저장 (${d.images.length}장)</button>
+      <button class="btn y" id="b-cap" ${d.caption.body ? "" : "disabled"}>📝 캡션 복사</button>
+      <button class="btn y" id="b-tag" ${d.caption.tags ? "" : "disabled"}>#️⃣ 해시태그 복사</button>
+      <button class="btn" id="b-render">🔄 렌더링</button>
+      <button class="btn" id="b-send" ${INFO.discord ? "" : "disabled"}>📨 디스코드로</button>
+      <a class="btn" style="text-align:center;text-decoration:none" href="#/edit/${encodeURIComponent(d.file)}">✏️ 원고 편집</a>
+      <a class="btn" style="text-align:center;text-decoration:none;${d.images.length ? "" : "pointer-events:none;opacity:.5"}" href="/api/zip/${encodeURIComponent(d.slug)}">🗜️ ZIP (PC용)</a>
+    </div>
+    <button class="btn full ${post ? "" : "y"}" id="b-posted" style="width:100%;margin-bottom:14px">${post ? `✅ 업로드함 · ${fmtDT(post.postedAt)} (누르면 취소)` : "📤 인스타에 올렸어요 (48시간 뒤 성과 알림)"}</button>
+    <div id="renderlog"></div>
+    <div class="box"><h3>본문 캡션 <button class="btn" data-copy="cap">복사</button></h3><pre>${esc(d.caption.body || "캡션 파일이 없어요")}</pre></div>
+    <div class="box"><h3>댓글용 해시태그 <span class="muted">${(d.caption.tags.match(/#/g) || []).length}개</span><button class="btn" data-copy="tag">복사</button></h3><pre>${esc(d.caption.tags || "없음")}</pre></div>
+    ${d.caption.memo ? `<div class="box"><details><summary>출처·메모 (발행 전 확인용)</summary><pre style="margin-top:8px">${esc(d.caption.memo)}</pre></details></div>` : ""}
+    <div class="box">
+      <h3>설정</h3>
+      <div class="chips">
+        <span class="chip y">${esc(d.category || "기타")}</span>
+        <span class="chip">표지 폰트: ${esc(d.coverFont)}</span>
+        <span class="chip">본문: ${esc(d.bodyStyle)}</span>
+        <span class="chip">배경: ${esc((d.background || "기본").replace("backgrounds/", ""))}</span>
+      </div>
+      <div id="bgsug" style="margin-top:10px"><span class="muted">재사용할 배경 찾는 중…</span></div>
+    </div>
+    <div class="box">
+      <h3>성과 기록 ${metrics ? `<span class="muted">${new Date(metrics.measuredAt).toLocaleDateString("ko-KR")} 기록됨</span>` : ""}</h3>
+      ${metricsForm(d.slug, metrics || (post ? { postedAt: new Date(post.postedAt).toLocaleDateString("sv-SE") } : null))}
+    </div>`;
+  document.getElementById("b-posted").onclick = async () => {
+    if (post && !confirm("업로드 표시를 취소할까요?")) return;
+    await api(`/api/deck/${encodeURIComponent(d.file)}/posted`, { method: "POST", body: JSON.stringify({ posted: !post }) });
+    toast(post ? "업로드 표시를 취소했어요" : "업로드 기록! 48시간 뒤 디스코드로 알려드려요 ⏰");
+    viewDeck(file);
+  };
+
+  const cap = d.caption.body, tag = d.caption.tags;
+  document.getElementById("b-save").onclick = () => saveAll(d);
+  document.getElementById("b-cap").onclick = () => copyText(cap, "캡션");
+  document.getElementById("b-tag").onclick = () => copyText(tag, "해시태그");
+  document.querySelectorAll("[data-copy]").forEach((b) => b.onclick = () => b.dataset.copy === "cap" ? copyText(cap, "캡션") : copyText(tag, "해시태그"));
+  const doRender = async (sendDiscord) => {
+    const btns = ["b-render", "b-send"].map((id) => document.getElementById(id));
+    btns.forEach((b) => (b.disabled = true));
+    const log = document.getElementById("renderlog");
+    const show = (pr) => {
+      const done = pr ? pr.done : 0, total = pr ? pr.total : d.slides;
+      const label = pr && pr.sending ? "디스코드로 보내는 중" : `렌더링 중 ${done} / ${total}장`;
+      log.innerHTML = `<div class="box"><b>${label}…</b><div class="bar" style="margin-top:8px"><i style="width:${total ? (done / total) * 100 : 0}%;transition:width .3s"></i></div></div>`;
+    };
+    show(null);
+    const poll = setInterval(async () => { try { const i = await api("/api/info"); if (i.progress && i.progress.file === d.file) show(i.progress); } catch {} }, 700);
+    try {
+      await api("/api/render", { method: "POST", body: JSON.stringify({ file: d.file, send: sendDiscord }) });
+      clearInterval(poll);
+      toast(sendDiscord ? "렌더링하고 디스코드로 보냈어요 📨" : "렌더링 완료 ✨");
+      viewDeck(file);
+    } catch (e) {
+      clearInterval(poll);
+      log.innerHTML = `<div class="box"><b style="color:var(--bad)">실패: ${esc(e.message)}</b>${e.data && e.data.log ? `<div class="log" style="margin-top:8px">${esc(e.data.log)}</div>` : ""}</div>`;
+      btns.forEach((b) => (b.disabled = false));
+    }
+  };
+  // 배경 추천 (재사용 = 0원)
+  api(`/api/deck/${encodeURIComponent(d.file)}/bg-suggest`).then((list) => {
+    const el = document.getElementById("bgsug");
+    if (!el) return;
+    if (!list.length) { el.innerHTML = `<span class="muted">비슷한 배경이 창고에 없어요. 배경 창고에서 새로 만들 수 있어요.</span>`; return; }
+    el.innerHTML = `<div class="muted" style="margin-bottom:6px">재사용 추천 배경 (비용 0원)</div><div class="bgs" style="grid-template-columns:repeat(3,1fr)">${list.map((b) => `
+      <figure><img src="${b.url}" loading="lazy" alt=""><figcaption><b style="font-size:11px">${esc(b.name)}</b>
+      <div class="muted" style="font-size:11px">${esc(b.hits.join(", "))}</div>
+      <button class="btn" style="margin-top:6px;padding:6px;font-size:12px;width:100%" data-usebg="${esc(b.name)}">이 배경으로</button></figcaption></figure>`).join("")}</div>`;
+    el.querySelectorAll("[data-usebg]").forEach((btn) => btn.onclick = async () => {
+      await api(`/api/deck/${encodeURIComponent(d.file)}/background`, { method: "POST", body: JSON.stringify({ background: btn.dataset.usebg }) });
+      toast("배경을 바꿨어요. 렌더링을 눌러 확인하세요");
+      viewDeck(file);
+    });
+  }).catch(() => {});
+  document.getElementById("b-render").onclick = () => doRender(false);
+  document.getElementById("b-send").onclick = () => doRender(true);
+  bindMetricsForm(() => viewDeck(file));
+}
+
+// ---------- 화면: 원고 편집 ----------
+const FIELD_NAMES = { kicker: "꼬리표(kicker)", title: "제목", sub: "한 줄 설명(sub)", heading: "소제목", text: "본문", note: "점선 박스(note)",
+  summary: "요약", big: "큰 숫자", bigLabel: "큰 숫자 설명", source: "출처", cta: "행동 유도(cta)", footnote: "각주", credit: "크레딧" };
+const DEFAULT_FIELDS = { cover: ["kicker", "title", "sub"], body: ["heading", "text", "note"] };
+const TYPE_NAMES = { cover: "표지", body: "본문", compare: "비교", trend: "추세 그래프", stat: "통계", list: "목록" };
+const rowsOf = (v) => Math.min(8, Math.max(2, String(v || "").split("\n").length + 1));
+
+async function viewEdit(file) {
+  setTab("decks");
+  const d = await api(`/api/deck/${encodeURIComponent(file)}`);
+  const j = d.json;
+  const slideHtml = j.slides.map((s, si) => {
+    const keys = Object.keys(FIELD_NAMES).filter((k) => typeof s[k] === "string" || (DEFAULT_FIELDS[s.type] || ["heading"]).includes(k));
+    const fields = keys.map((k) => `<label>${FIELD_NAMES[k]}<textarea data-si="${si}" data-k="${k}" rows="${rowsOf(s[k])}">${esc(s[k] || "")}</textarea></label>`).join("");
+    const items = Array.isArray(s.items) ? `<div class="muted" style="margin-top:6px">목록 항목</div>${s.items.map((it, ii) => `
+      <div style="display:grid;grid-template-columns:48px 1fr;gap:6px;margin-top:6px">
+        <input data-si="${si}" data-item="${ii}" data-ik="icon" value="${esc(it.icon || "")}" aria-label="아이콘">
+        <div style="display:grid;gap:6px">
+          <input data-si="${si}" data-item="${ii}" data-ik="title" value="${esc(it.title || "")}" placeholder="항목 제목">
+          <textarea data-si="${si}" data-item="${ii}" data-ik="desc" rows="${rowsOf(it.desc)}" placeholder="설명">${esc(it.desc || "")}</textarea>
+        </div></div>`).join("")}` : "";
+    return `<div class="box"><h3>${si + 1}장 · ${TYPE_NAMES[s.type] || esc(s.type)}</h3><div style="display:grid;gap:8px">${fields}${items}</div></div>`;
+  }).join("");
+
+  $app.innerHTML = `
+    <a href="#/deck/${encodeURIComponent(file)}" class="muted" style="text-decoration:none">← 게시물로</a>
+    <h2 style="margin-top:8px">원고 편집</h2>
+    <p class="muted" style="margin-bottom:12px">줄바꿈은 그대로, <b>*단어*</b>는 강조. 저장할 때마다 이전 버전이 content/.bak 에 백업돼요.</p>
+    ${slideHtml}
+    <div class="box"><h3>본문 캡션</h3><textarea id="e-cap" rows="${rowsOf(d.caption.body) + 4}">${esc(d.caption.body)}</textarea></div>
+    <div class="box"><h3>댓글용 해시태그 <span class="muted" id="e-tagn"></span></h3><textarea id="e-tag" rows="4">${esc(d.caption.tags)}</textarea></div>
+    <div class="box"><details><summary>고급: 원고 JSON 직접 수정</summary>
+      <p class="muted" style="margin:6px 0">여기를 고치면 위 칸 대신 이 내용이 저장돼요.</p>
+      <textarea id="e-raw" rows="14" style="font-family:Consolas,monospace;font-size:12px">${esc(JSON.stringify(j, null, 2))}</textarea></details></div>
+    <div class="btns">
+      <button class="btn" id="e-save">💾 저장</button>
+      <button class="btn primary" id="e-save-render">💾 저장하고 렌더링</button>
+    </div>
+    <div id="e-msg"></div>`;
+
+  const rawOrig = document.getElementById("e-raw").value;
+  const tagCount = () => { const n = (document.getElementById("e-tag").value.match(/#/g) || []).length; document.getElementById("e-tagn").textContent = `${n}개${n !== 30 ? " (권장 30개)" : ""}`; };
+  document.getElementById("e-tag").oninput = tagCount; tagCount();
+
+  const collect = () => {
+    const raw = document.getElementById("e-raw").value;
+    if (raw !== rawOrig) return JSON.parse(raw); // 형식이 틀리면 throw
+    const next = JSON.parse(JSON.stringify(j));
+    document.querySelectorAll("[data-si]").forEach((el) => {
+      const s = next.slides[Number(el.dataset.si)];
+      const v = el.value.replace(/\r\n/g, "\n");
+      if (el.dataset.k) { if (v.trim() || typeof s[el.dataset.k] === "string") { if (v.trim()) s[el.dataset.k] = v; else delete s[el.dataset.k]; } }
+      else if (el.dataset.item != null) { const it = s.items[Number(el.dataset.item)]; if (v.trim()) it[el.dataset.ik] = v; else delete it[el.dataset.ik]; }
+    });
+    return next;
+  };
+  const save = async (thenRender) => {
+    let json;
+    try { json = collect(); } catch (e) { return toast("JSON 형식이 틀렸어요: " + e.message); }
+    const body = { json, caption: { body: document.getElementById("e-cap").value, tags: document.getElementById("e-tag").value } };
+    try {
+      await api(`/api/deck/${encodeURIComponent(file)}/save`, { method: "POST", body: JSON.stringify(body) });
+      toast("저장했어요 💾");
+      if (thenRender) {
+        location.hash = `#/deck/${encodeURIComponent(file)}`;
+        setTimeout(() => document.getElementById("b-render")?.click(), 400);
+      }
+    } catch (e) { document.getElementById("e-msg").innerHTML = `<div class="box"><b style="color:var(--bad)">저장 실패: ${esc(e.message)}</b></div>`; }
+  };
+  document.getElementById("e-save").onclick = () => save(false);
+  document.getElementById("e-save-render").onclick = () => save(true);
+}
+
+// ---------- 성과 기록 폼 ----------
+function metricsForm(slug, m = {}) {
+  m = m || {};
+  const v = (k) => (m[k] ?? "") === null ? "" : (m[k] ?? "");
+  return `<form class="grid" id="mform" data-slug="${esc(slug)}">
+    <label>도달<input name="reach" inputmode="numeric" value="${v("reach")}"></label>
+    <label>저장<input name="saves" inputmode="numeric" value="${v("saves")}"></label>
+    <label>공유<input name="shares" inputmode="numeric" value="${v("shares")}"></label>
+    <label>좋아요<input name="likes" inputmode="numeric" value="${v("likes")}"></label>
+    <label>댓글<input name="comments" inputmode="numeric" value="${v("comments")}"></label>
+    <label>팔로우<input name="follows" inputmode="numeric" value="${v("follows")}"></label>
+    <label>프로필 방문<input name="profileVisits" inputmode="numeric" value="${v("profileVisits")}"></label>
+    <label>올린 날짜<input name="postedAt" type="date" value="${v("postedAt")}"></label>
+    <label class="check"><input type="checkbox" name="music" ${m.music ? "checked" : ""}> 음악 넣음</label>
+    <label class="check"><input type="checkbox" name="commentTags" ${m.commentTags ? "checked" : ""}> 댓글 해시태그 담</label>
+    <label class="span2">메모<input name="note" value="${esc(m.note || "")}" placeholder="예: 노래 '○○', 저녁 9시 업로드"></label>
+    <button class="btn primary span2" type="submit">저장 (올리고 48시간 뒤 인사이트 숫자)</button>
+  </form>`;
+}
+function bindMetricsForm(after) {
+  const f = document.getElementById("mform");
+  if (!f) return;
+  f.onsubmit = async (e) => {
+    e.preventDefault();
+    const fd = new FormData(f);
+    const body = Object.fromEntries(fd.entries());
+    body.slug = f.dataset.slug; body.music = fd.has("music"); body.commentTags = fd.has("commentTags");
+    await api("/api/metrics", { method: "POST", body: JSON.stringify(body) });
+    toast("성과를 저장했어요 📈");
+    after && after();
+  };
+}
+
+// ---------- 화면: 성과 기록 ----------
+async function viewMetrics() {
+  setTab("metrics");
+  const [decks, metrics] = await Promise.all([api("/api/decks"), api("/api/metrics")]);
+  const bySlug = Object.fromEntries(decks.map((d) => [d.slug, d]));
+  const rows = metrics.map((m) => ({ ...m, deck: bySlug[m.slug] })).sort((a, b) => String(b.postedAt).localeCompare(String(a.postedAt)));
+  const n = (x) => (x == null ? "-" : Number(x).toLocaleString("ko-KR"));
+
+  const groups = [
+    ["음악", (r) => (r.music ? "넣음" : "안 넣음")],
+    ["댓글 해시태그", (r) => (r.commentTags ? "담" : "안 담")],
+    ["본문 스타일", (r) => r.deck?.bodyStyle || "?"],
+    ["표지 폰트", (r) => r.deck?.coverFont || "?"],
+    ["카테고리", (r) => r.deck?.category || "?"],
+  ];
+  const metric = new URLSearchParams(location.hash.split("?")[1] || "").get("m") || "shares";
+  const metricName = { reach: "도달", saves: "저장", shares: "공유", follows: "팔로우" }[metric];
+  const cmpHtml = groups.map(([title, key]) => {
+    const agg = {};
+    rows.forEach((r) => { if (r[metric] == null) return; const k = key(r); (agg[k] ||= []).push(r[metric]); });
+    const entries = Object.entries(agg).map(([k, arr]) => [k, arr.reduce((a, b) => a + b, 0) / arr.length, arr.length]);
+    if (entries.length < 2) return "";
+    const max = Math.max(...entries.map((e) => e[1]), 1);
+    return `<div class="box"><h3>${title}별 평균 ${metricName}</h3><div class="cmp">${entries.sort((a, b) => b[1] - a[1]).map(([k, avg, cnt]) => `
+      <div class="row"><span>${esc(k)} <span class="muted">(${cnt}개)</span></span><div class="bar"><i style="width:${(avg / max) * 100}%"></i></div><b style="text-align:right">${Math.round(avg).toLocaleString("ko-KR")}</b></div>`).join("")}
+      </div>${entries.some((e) => e[2] < 3) ? `<p class="muted" style="margin-top:8px">※ 3개 미만인 그룹은 운이 섞여 있어요. 더 쌓이면 판단하세요.</p>` : ""}</div>`;
+  }).join("");
+
+  const noMetric = decks.filter((d) => d.images.length && !metrics.some((m) => m.slug === d.slug));
+  $app.innerHTML = `
+    <h2>성과 기록</h2>
+    <p class="muted" style="margin-bottom:12px">올리고 48시간 뒤 인스타 인사이트 숫자를 넣어두면, 무엇이 잘 먹히는지 변수별로 비교해 드려요.</p>
+    ${noMetric.length ? `<div class="box"><h3>기록 안 한 게시물</h3>${noMetric.map((d) => `<a href="#/deck/${encodeURIComponent(d.file)}" style="display:block;padding:6px 0">📝 ${esc(d.title)}</a>`).join("")}</div>` : ""}
+    <div class="box scroll">
+      <h3>게시물별</h3>
+      ${rows.length ? `<table><thead><tr><th>게시물</th><th>도달</th><th>저장</th><th>공유</th><th>팔로우</th></tr></thead><tbody>
+      ${rows.map((r) => `<tr><td><a href="#/deck/${encodeURIComponent(r.deck?.file || "")}">${esc(r.deck?.title || r.slug)}</a><div class="muted">${esc(r.postedAt || "")} ${r.music ? "🎵" : ""}${r.commentTags ? "#" : ""}</div></td><td>${n(r.reach)}</td><td>${n(r.saves)}</td><td>${n(r.shares)}</td><td>${n(r.follows)}</td></tr>`).join("")}
+      </tbody></table>` : `<p class="muted">아직 기록이 없어요.</p>`}
+    </div>
+    <div class="chips" style="margin:4px 0 12px">
+      ${["shares", "saves", "reach", "follows"].map((k) => `<a class="chip ${k === metric ? "y" : ""}" style="text-decoration:none" href="#/metrics?m=${k}">${{ reach: "도달", saves: "저장", shares: "공유", follows: "팔로우" }[k]} 기준</a>`).join("")}
+    </div>
+    ${cmpHtml || `<div class="box muted">비교하려면 조건이 다른 게시물이 2개 이상 필요해요 (예: 음악 넣은 것 / 안 넣은 것).</div>`}`;
+}
+
+// ---------- 화면: 배경 창고 ----------
+async function viewBg() {
+  setTab("bg");
+  const [bgs, prompts, decks] = await Promise.all([api("/api/backgrounds"), api("/api/prompts"), api("/api/decks")]);
+  const u = INFO.bg || { used: 0, limit: 5 };
+  $app.innerHTML = `
+    <h2>배경 창고</h2>
+    <p class="muted" style="margin-bottom:12px">한 번 만든 배경은 다시 쓰면 비용이 0원이에요. 아래에서 원고를 고르고 '이 원고 배경으로'를 누르면 바로 지정돼요.</p>
+    <div class="box">
+      <h3>🎨 새 배경 만들기 <span class="muted">오늘 ${u.used} / ${u.limit}장</span></h3>
+      <form id="genf" style="display:grid;gap:8px">
+        <label>프롬프트<select name="promptName"><option value="">✍️ 새로 쓰기</option>${prompts.map((p) => `<option value="${esc(p.name)}">${esc(p.name)}</option>`).join("")}</select></label>
+        <label id="newp">새 프롬프트 (영어, 글씨 없는 배경)<textarea name="prompt" rows="5" placeholder="e.g. Clean bright editorial illustration of ..., no text, no letters"></textarea></label>
+        <pre id="ptext" class="muted" style="font-size:11px;display:none;max-height:140px;overflow:auto"></pre>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <label>저장 이름<input name="name" placeholder="rain-02" autocapitalize="off" autocomplete="off"></label>
+          <label>품질<select name="quality"><option value="low">low (시험용, 기본)</option><option value="medium">medium</option><option value="high">high (최종본)</option></select></label>
+        </div>
+        <p class="muted" style="font-size:12px">순서: low로 시험 → 마음에 들면 high. 음식은 실사 클로즈업 금지(일러스트·밝은 화보로).</p>
+        <button class="btn primary" ${INFO.openai ? "" : "disabled"}>${INFO.openai ? "생성하기 (30초~1분)" : ".env 에 OPENAI_API_KEY 필요"}</button>
+      </form>
+      <div id="genmsg"></div>
+    </div>
+    <label style="margin-bottom:10px">지정할 원고<select id="target"><option value="">— 원고 선택 —</option>${decks.map((d) => `<option value="${esc(d.file)}">${esc(d.title)}</option>`).join("")}</select></label>
+    ${bgs.length ? `<div class="bgs">${bgs.map((b) => `
+      <figure><a href="${b.url}" target="_blank" rel="noopener"><img src="${b.url}" loading="lazy" alt=""></a>
+        <figcaption><b>${esc(b.name)}</b> ${b.test ? `<span class="chip">시험본</span>` : ""}
+        ${b.prompt ? `<details><summary class="muted">프롬프트</summary><pre class="muted" style="font-size:11px">${esc(b.prompt)}</pre></details>` : ""}
+        <button class="btn" style="margin-top:6px;padding:6px 10px;font-size:12px;width:100%" data-assign="${esc(b.name)}">이 원고 배경으로</button>
+        <button class="btn" style="margin-top:6px;padding:6px 10px;font-size:12px;width:100%" data-name="${esc(b.name)}">경로 복사</button></figcaption></figure>`).join("")}</div>`
+      : `<div class="empty-state">배경이 없어요.</div>`}`;
+  document.querySelectorAll("[data-name]").forEach((b) => b.onclick = () => copyText(`backgrounds/${b.dataset.name}`, "배경 경로"));
+  document.querySelectorAll("[data-assign]").forEach((b) => b.onclick = async () => {
+    const target = document.getElementById("target").value;
+    if (!target) return toast("위에서 원고를 먼저 골라주세요");
+    try {
+      await api(`/api/deck/${encodeURIComponent(target)}/background`, { method: "POST", body: JSON.stringify({ background: b.dataset.assign }) });
+      toast("배경을 지정했어요. 게시물에서 렌더링하세요");
+    } catch (e) { toast("실패: " + e.message); }
+  });
+  const f = document.getElementById("genf");
+  const sel = f.promptName;
+  sel.onchange = () => {
+    const p = prompts.find((x) => x.name === sel.value);
+    document.getElementById("newp").style.display = p ? "none" : "";
+    const pt = document.getElementById("ptext"); pt.style.display = p ? "" : "none"; pt.textContent = p ? p.text : "";
+  };
+  f.onsubmit = async (e) => {
+    e.preventDefault();
+    const body = { name: f.elements.namedItem("name").value.trim(), quality: f.quality.value, promptName: sel.value, prompt: sel.value ? "" : f.prompt.value };
+    if (body.quality !== "low") {
+      if (!confirm(`${body.quality} 품질은 low보다 비용이 더 들어요. low 시험본을 확인하셨나요? 진행할까요?`)) return;
+      body.confirm = true;
+    }
+    const btn = f.querySelector("button"); btn.disabled = true;
+    const msg = document.getElementById("genmsg");
+    msg.innerHTML = `<p class="muted" style="margin-top:8px">생성 중… 화면을 닫지 마세요 (30초~1분)</p>`;
+    try {
+      const r = await api("/api/bg/generate", { method: "POST", body: JSON.stringify(body) });
+      toast(`완성! ${r.name}`);
+      INFO.bg = r.usage;
+      viewBg();
+    } catch (err) {
+      msg.innerHTML = `<div style="margin-top:8px"><b style="color:var(--bad)">${esc(err.message)}</b>${err.data && err.data.log ? `<div class="log" style="margin-top:6px">${esc(err.data.log)}</div>` : ""}</div>`;
+      btn.disabled = false;
+    }
+  };
+}
+
+// ---------- PIN ----------
+function showPin() {
+  $app.innerHTML = `<form class="pinbox" id="pinf"><h2>🔒 PIN 입력</h2><input name="pin" inputmode="numeric" autocomplete="current-password" placeholder="PIN"><button class="btn primary">들어가기</button></form>`;
+  document.getElementById("pinf").onsubmit = async (e) => {
+    e.preventDefault();
+    const pin = new FormData(e.target).get("pin");
+    const r = await fetch("/api/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ pin }) });
+    if (r.ok) { route(); } else toast("PIN이 달라요");
+  };
+}
+
+// ---------- router ----------
+async function route() {
+  try {
+    INFO = await api("/api/info");
+    document.getElementById("status").textContent = INFO.busy ? "렌더링 중…" : "";
+    const h = location.hash.replace(/^#/, "") || "/";
+    if (h.startsWith("/deck/")) await viewDeck(decodeURIComponent(h.slice(6)));
+    else if (h.startsWith("/edit/")) await viewEdit(decodeURIComponent(h.slice(6)));
+    else if (h.startsWith("/metrics")) await viewMetrics();
+    else if (h.startsWith("/bg")) await viewBg();
+    else await viewDecks();
+    window.scrollTo(0, 0);
+  } catch (e) {
+    if (e.message !== "pin") $app.innerHTML = `<div class="box"><b style="color:var(--bad)">오류: ${esc(e.message)}</b><p class="muted">스튜디오 프로그램(cmd 창)이 켜져 있는지 확인하세요.</p></div>`;
+  }
+}
+window.addEventListener("hashchange", route);
+route();
+</script>
+</body>
+</html>

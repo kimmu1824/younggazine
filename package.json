@@ -1,0 +1,16 @@
+{
+  "name": "younggazine",
+  "version": "0.2.0",
+  "private": true,
+  "description": "영거진 카드뉴스 자동 제작 (1단계: 렌더러)",
+  "type": "module",
+  "scripts": {
+    "setup": "npx playwright install chromium",
+    "render": "node render.js",
+    "sample": "node render.js content/sample.json",
+    "studio": "node studio.js"
+  },
+  "dependencies": {
+    "playwright": "^1.48.0"
+  }
+}
